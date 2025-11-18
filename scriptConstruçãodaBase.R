@@ -85,9 +85,32 @@ df_raw <- readr::read_csv2(
 
 df_raw %>% head() #data frame resultante tem nome do município nas linhas, e estimativas de população residente masculina, feminina e total para 2024 nas colunas
 
+library(stringi) #vamos facilitar os cálculos adicionando o código de município no data grame df_raw
 
+#Padronizando textos para garantir correspondência
+df_clean <- df_raw %>%
+  mutate(
+    muni_norm = Município %>%
+      str_to_lower() %>%
+      stri_trans_general("Latin-ASCII")
+  )
 
+muni_clean <- muni_rj %>%
+  mutate(
+    muni_norm = name_muni %>%
+      str_to_lower() %>%
+      stri_trans_general("Latin-ASCII")
+  )
 
+#Juntando os códigos com o df_raw
+df_final <- df_clean %>%
+  left_join(
+    muni_clean %>% select(code_muni, muni_norm),
+    by = "muni_norm"
+  ) %>%
+  select(-muni_norm,-geom)
+
+df_final
 
 
 
