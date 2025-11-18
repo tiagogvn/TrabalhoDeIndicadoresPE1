@@ -56,10 +56,24 @@ obitos_mun <- dados_sim |>
 
 obitos_mun #data frame resultante tem código do município, a causa específica e quantidade de ocorrências no município
 
-library(censobr) #pacote para obter a população total residente masculina e feminina nos municípios, informação não contida nas fontes anteriores
+library(sidrar) #pacote para estimativas de 2023 das informações que queremos, já que o último senso foi feito em 2022
+library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro
 
-# Verificar dicionário para saber os nomes/códigos das variáveis (último ano disponível é 2010)
-data_dictionary(dataset = "population", year = 2010)
+#Buscando do datasus, do sistema SINASC 
+nascidos_2023 <- fetch_datasus(
+  year_start = 2023,
+  year_end = 2023,
+  uf = "RJ",
+  information_system = "SINASC"
+) %>%
+  process_sinasc()
+
+# Agrupando por município:
+nv_mun <- nascidos_2023 %>%
+  group_by(code_muni = CODMUNRES) %>% 
+  summarise(nascidos_vivos = n(), .groups = "drop")
+
+nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
 
 
 
