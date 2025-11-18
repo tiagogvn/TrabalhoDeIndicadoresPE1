@@ -36,3 +36,30 @@ base_indicadores <- mun_rj |>
     PMDCv23 = NA_real_,
     PMCMD23 = NA_real_
   )
+
+library(microdatasus) #pacote para obter informações sobre a mortalidade
+
+dados_sim <- fetch_datasus(
+  year_start = 2023, year_end = 2023,
+  uf = "RJ",
+  information_system = "SIM-DO"
+) |>
+  process_sim()
+
+dados_sim #data frame resultante tem informações da mortalidade por indivíduo,
+          #agruparemos por código do município para então extrair as informações
+          #para nós relevantes: sexo, cor, causa de morte, etc.
+
+obitos_mun <- dados_sim |>
+  group_by(code_muni = CODMUNRES, causa = CAUSABAS) |> #para o cálculo dos nossos indicadores, consideramos o município de residência, portanto agruparemos por 'CODMUNRES'
+  summarise(obitos = n(), .groups = "drop")
+
+obitos_mun #data frame resultante tem código do município, a causa específica e quantidade de ocorrências no município
+
+library(censobr) #pacote para obter a população total residente masculina e feminina nos municípios, informação não contida nas fontes anteriores
+
+# Verificar dicionário para saber os nomes/códigos das variáveis (último ano disponível é 2010)
+data_dictionary(dataset = "population", year = 2010)
+
+
+
