@@ -15,7 +15,7 @@ library(dplyr) #pacote para manipulação de dados
 library(sf)
 
 # Baixar lista de municípios do RJ
-mun_rj <- read_municipality(code_muni = "RJ", year = 2022) |>
+mun_rj <- read_municipality(code_muni = "RJ", year = 2024) |>
   st_drop_geometry() |>
   select(code_muni, name_muni)
 
@@ -23,24 +23,24 @@ mun_rj <- read_municipality(code_muni = "RJ", year = 2022) |>
 #todos os municípios do Rio de Janeiro nas linhas
 base_indicadores <- mun_rj |>
   mutate(
-    TxMFAG22 = NA_real_,
-    TxMNDC22 = NA_real_,
-    TxMPADR22 = NA_real_,
-    TxMMVP22 = NA_real_,
-    TxMPMDPNN22 = NA_real_,
-    TxMCEPP22 = NA_real_,
-    TxFNM22 = NA_real_,
-    TxMAT22 = NA_real_,
-    TxMLAP22 = NA_real_,
-    TxMDAF22 = NA_real_,
-    PMDCv22 = NA_real_,
-    PMCMD22 = NA_real_
+    TxMFAG24 = NA_real_,
+    TxMNDC24 = NA_real_,
+    TxMPADR24 = NA_real_,
+    TxMMVP24 = NA_real_,
+    TxMPMDPNN24 = NA_real_,
+    TxMCEPP24 = NA_real_,
+    TxFNM24 = NA_real_,
+    TxMAT24 = NA_real_,
+    TxMLAP24 = NA_real_,
+    TxMDAF24 = NA_real_,
+    PMDCv24 = NA_real_,
+    PMCMD24 = NA_real_
   )
 
 library(microdatasus) #pacote para obter informações sobre a mortalidade
 
 dados_sim <- fetch_datasus(
-  year_start = 2022, year_end = 2022,
+  year_start = 2024, year_end = 2024,
   uf = "RJ",
   information_system = "SIM-DO"
 ) |>
@@ -56,23 +56,36 @@ obitos_mun <- dados_sim |>
 
 obitos_mun #data frame resultante tem código do município, a causa específica e quantidade de ocorrências no município
 
-library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro em 2022
+library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro em 2024
 
 #Buscando do datasus, do sistema SINASC as quantidades de nascidos vivos
 nascidos_2022 <- fetch_datasus(
-  year_start = 2022,
-  year_end = 2022,
+  year_start = 2024,
+  year_end = 2024,
   uf = "RJ",
   information_system = "SINASC"
 ) %>%
   process_sinasc()
 
 # Agrupando por município:
-nv_mun <- nascidos_2022 %>%
+nv_mun <- nascidos_2024 %>%
   group_by(code_muni = CODMUNRES) %>% 
   summarise(nascidos_vivos = n(), .groups = "drop")
 
-nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
+nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2024
+
+library(readr) #agora iremos ler a planilha com as estimativas de população residente masculina, feminina e total para 2024 dos municípios do Rio de Janeiro, adquirida do estudo de estimativas populacionais pactuadas pela SES/RJ
+library(tidyr)
+library(stringr)
+
+df_raw <- readr::read_csv2(
+  "pop_populacao_ripsa202417634975410.csv",
+  locale = locale(encoding = "Latin1")
+)
+
+df_raw %>% head() #data frame resultante tem nome do município nas linhas, e estimativas de população residente masculina, feminina e total para 2024 nas colunas
+
+
 
 
 
