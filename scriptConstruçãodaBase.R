@@ -15,7 +15,7 @@ library(dplyr) #pacote para manipulação de dados
 library(sf)
 
 # Baixar lista de municípios do RJ
-mun_rj <- read_municipality(code_muni = "RJ", year = 2024) |>
+mun_rj <- read_municipality(code_muni = "RJ", year = 2023) |>
   st_drop_geometry() |>
   select(code_muni, name_muni)
 
@@ -23,45 +23,26 @@ mun_rj <- read_municipality(code_muni = "RJ", year = 2024) |>
 #todos os municípios do Rio de Janeiro nas linhas
 base_indicadores <- mun_rj |>
   mutate(
-    TxMFAG24 = NA_real_,
-    TxMNDC24 = NA_real_,
-    TxMPADR24 = NA_real_,
-    TxMMVP24 = NA_real_,
-    TxMPMDPNN24 = NA_real_,
-    TxMCEPP24 = NA_real_,
-    TxFNM24 = NA_real_,
-    TxMAT24 = NA_real_,
-    TxMLAP24 = NA_real_,
-    TxMDAF24 = NA_real_,
-    PMDCv24 = NA_real_,
-    PMCMD24 = NA_real_
+    TxMFAG23 = NA_real_,
+    TxMNDC23 = NA_real_,
+    TxMPADR23 = NA_real_,
+    TxMMVP23 = NA_real_,
+    TxMPMDPNN23 = NA_real_,
+    TxMCEPP23 = NA_real_,
+    TxFNM23 = NA_real_,
+    TxMAT23 = NA_real_,
+    TxMLAP23 = NA_real_,
+    TxMDAF23 = NA_real_,
+    PMDCv23 = NA_real_,
+    PMCMD23 = NA_real_
   )
 
-library(microdatasus) #pacote para obter informações sobre a mortalidade
-
-dados_sim <- fetch_datasus(
-  year_start = 2024, year_end = 2024,
-  uf = "RJ",
-  information_system = "SIM-DO"
-) |>
-  process_sim()
-
-dados_sim #data frame resultante tem informações da mortalidade por indivíduo,
-          #agruparemos por código do município para então extrair as informações
-          #para nós relevantes: sexo, cor, causa de morte, etc.
-
-obitos_mun <- dados_sim |>
-  group_by(code_muni = CODMUNRES, causa = CAUSABAS) |> #para o cálculo dos nossos indicadores, consideramos o município de residência, portanto agruparemos por 'CODMUNRES'
-  summarise(obitos = n(), .groups = "drop")
-
-obitos_mun #data frame resultante tem código do município, a causa específica e quantidade de ocorrências no município
-
-library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro em 2024
+library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro em 2023, e outras informações de mortalidade
 
 #Buscando do datasus, do sistema SINASC as quantidades de nascidos vivos
-nascidos_2022 <- fetch_datasus(
-  year_start = 2024,
-  year_end = 2024,
+nascidos_2024 <- fetch_datasus(
+  year_start = 2023,
+  year_end = 2023,
   uf = "RJ",
   information_system = "SINASC"
 ) %>%
@@ -72,18 +53,18 @@ nv_mun <- nascidos_2024 %>%
   group_by(code_muni = CODMUNRES) %>% 
   summarise(nascidos_vivos = n(), .groups = "drop")
 
-nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2024
+nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
 
-library(readr) #agora iremos ler a planilha com as estimativas de população residente masculina, feminina e total para 2024 dos municípios do Rio de Janeiro, adquirida do estudo de estimativas populacionais pactuadas pela SES/RJ
+library(readr) #agora iremos ler a planilha com as estimativas de população residente masculina, feminina e total para 2023 dos municípios do Rio de Janeiro, adquirida do estudo de estimativas populacionais pactuadas pela SES/RJ
 library(tidyr)
 library(stringr)
 
 df_raw <- readr::read_csv2(
-  "pop_populacao_ripsa202417634975410.csv",
+  "pop_populacao_ripsa202417635071428.csv",
   locale = locale(encoding = "Latin1")
 )
 
-df_raw %>% head() #data frame resultante tem nome do município nas linhas, e estimativas de população residente masculina, feminina e total para 2024 nas colunas
+df_raw %>% head() #data frame resultante tem nome do município nas linhas, e estimativas de população residente masculina, feminina e total para 2023 nas colunas
 
 library(stringi) #vamos facilitar os cálculos adicionando o código de município no data grame df_raw
 
@@ -94,6 +75,9 @@ df_clean <- df_raw %>%
       str_to_lower() %>%
       stri_trans_general("Latin-ASCII")
   )
+
+muni_rj <- geobr::read_municipality(code_muni = "RJ", year = 2023) %>%
+  select(code_muni, name_muni)
 
 muni_clean <- muni_rj %>%
   mutate(
@@ -110,7 +94,34 @@ df_final <- df_clean %>%
   ) %>%
   select(-muni_norm,-geom)
 
+df_final <- df_final %>% filter(Município != "Total") #retirando linha do total
 df_final
+#Agora que temos todos os valores que serão utilizados nos denominadores das
+#fórmulas dos indicadores, basta calcular cada indicador pegando a informação
+#de mortalidade.
+#Começando pelo indicador de Mortalidade Feminina por Doenças do Aparelho Geniturinário:
+
+#Baixando SIM 2023 para o RJ, que contém dados que serão utilizados para o cálculo de quase todos os indicadores
+sim_2023 <- fetch_datasus(
+  year_start = 2023,
+  year_end = 2023,
+  uf = "RJ",
+  information_system = "SIM-DO",
+  vars = c("SEXO", "CAUSABAS", "CODMUNRES","NM_MUNICIP")
+)
+
+#Calculando quantidade de óbitos por N00-99 nos municípios do Rio de Janeiro em 2023
+obitos_genit_fem <- sim_2023 %>%
+  filter(
+    SEXO == "2",                           # apenas mulheres
+    str_detect(CAUSABAS, "^N[0-9]{2}")     # CID N00 a N99
+  ) %>%
+  count(CODMUNRES, name = "obitos_genit_fem")
+
+obitos_genit_fem #o valor dessa variável no município m será o numerador da fórmula do indicador TxMFAG23 para o município em questão
+                 #já o numerador, para esse indicador, será o valor da coluna "Feminino" do data frame df_final no município m
+                 #por fim, o resultado dessa divisão será multiplicado pelo fator de multiplicação
+
 
 
 
