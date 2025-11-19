@@ -107,7 +107,7 @@ sim_2023 <- fetch_datasus(
   year_end = 2023,
   uf = "RJ",
   information_system = "SIM-DO",
-  vars = c("SEXO", "CAUSABAS", "CODMUNRES","NM_MUNICIP")
+  vars = c("SEXO", "CAUSABAS", "CODMUNRES")
 )
 
 #Calculando quantidade de óbitos por N00-99 nos municípios do Rio de Janeiro em 2023
@@ -122,6 +122,10 @@ obitos_genit_fem #o valor dessa variável no município m será o numerador da f
                  #já o numerador, para esse indicador, será o valor da coluna "Feminino" do data frame df_final no município m
                  #por fim, o resultado dessa divisão será multiplicado pelo fator de multiplicação
 
+#Calculando:
+tabela_ind1 <- (obitos_genit_fem$obitos_genit_fem / df_final$Feminino) * 1e5
+tabela_ind1
 
+base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
 
 
