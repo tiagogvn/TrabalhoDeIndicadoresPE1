@@ -116,7 +116,12 @@ obitos_genit_fem <- sim_2023 %>%
     SEXO == "2",                           # apenas mulheres
     str_detect(CAUSABAS, "^N[0-9]{2}")     # CID N00 a N99
   ) %>%
-  count(CODMUNRES, name = "obitos_genit_fem")
+  count(CODMUNRES, name = "obitos_genit_fem") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_genit_fem = 0)) %>%
+  arrange(CODMUNRES)
+obitos_genit_fem <- obitos_genit_fem %>% #retirando indivíduos de município de residência desconhecido
+  filter(CODMUNRES != "330000")
 
 obitos_genit_fem #o valor dessa variável no município m será o numerador da fórmula do indicador TxMFAG23 para o município em questão
                  #já o numerador, para esse indicador, será o valor da coluna "Feminino" do data frame df_final no município m
@@ -127,5 +132,32 @@ tabela_ind1 <- (obitos_genit_fem$obitos_genit_fem / df_final$Feminino) * 1e5
 tabela_ind1
 
 base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
+
+
+#Agora, o indicador de mortalidade por disparo de arma de fogo
+
+#Obtendo número de mortes por armas de fogo por município em 2023
+obitos_armas <- sim_2023 %>%
+  filter(str_detect(CAUSABAS, "^W3[2-4]|^X7[2-4]|^Y2[2-4]|^X9[3-5]")) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_armas = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_armas = 0)) %>%
+  arrange(CODMUNRES)
+
+obitos_armas <- obitos_armas %>% #retirando indivíduos de município de residência desconhecido
+  filter(CODMUNRES != "330000")
+
+obitos_armas #numerador do indicador
+
+tabela_ind10 <- (obitos_armas$obitos_armas / df_final$Total) * 1e5
+tabela_ind10
+
+base_indicadores$TxMDAF23 <- tabela_ind10
+
+
+
+
+
 
 
