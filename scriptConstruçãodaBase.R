@@ -120,6 +120,7 @@ obitos_genit_fem <- sim_2023 %>%
   complete(CODMUNRES = sim_2023$CODMUNRES,
            fill = list(obitos_genit_fem = 0)) %>%
   arrange(CODMUNRES)
+
 obitos_genit_fem <- obitos_genit_fem %>% #retirando indivíduos de município de residência desconhecido
   filter(CODMUNRES != "330000")
 
@@ -141,7 +142,13 @@ obitos_neopl_fem <- sim_2023 %>%
     SEXO == "2",                           # apenas mulheres
     str_detect(CAUSABAS, "^C[0-9]{2}")     # CID C00 a C99
   ) %>%
-  count(CODMUNRES, name = "obitos_neopl_fem")
+  count(CODMUNRES, name = "obitos_neopl_fem") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_neopl_fem = 0)) %>%
+  arrange(CODMUNRES)
+
+obitos_neopl_fem <- obitos_neopl_fem %>% #retirando indivíduos de município de residência desconhecido
+  filter(CODMUNRES != "330000")
 
 obitos_neopl_fem #o valor dessa variável no município m será o numerador da fórmula do indicador TxFNM23 para o município em questão
 #já o numerador, para esse indicador, será o valor da coluna "Feminino" do data frame df_final no município m
