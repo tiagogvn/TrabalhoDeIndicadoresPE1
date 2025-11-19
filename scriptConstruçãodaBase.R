@@ -40,7 +40,7 @@ base_indicadores <- mun_rj |>
 library(microdatasus) #daqui vamos extrair a quantidade de nascidos vivos por município do Rio de Janeiro em 2023, e outras informações de mortalidade
 
 #Buscando do datasus, do sistema SINASC as quantidades de nascidos vivos
-nascidos_2024 <- fetch_datasus(
+nascidos_2023 <- fetch_datasus(
   year_start = 2023,
   year_end = 2023,
   uf = "RJ",
@@ -49,7 +49,7 @@ nascidos_2024 <- fetch_datasus(
   process_sinasc()
 
 # Agrupando por município:
-nv_mun <- nascidos_2024 %>%
+nv_mun <- nascidos_2023 %>%
   group_by(code_muni = CODMUNRES) %>% 
   summarise(nascidos_vivos = n(), .groups = "drop")
 
@@ -132,6 +132,26 @@ tabela_ind1 <- (obitos_genit_fem$obitos_genit_fem / df_final$Feminino) * 1e5
 tabela_ind1
 
 base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
+
+
+#Agora calcularemos o indicador de Mortalidade Feminina por Neoplasias Malignas:
+#Calculando quantidade de óbitos por C00-99 nos municípios do Rio de Janeiro em 2023
+obitos_neopl_fem <- sim_2023 %>%
+  filter(
+    SEXO == "2",                           # apenas mulheres
+    str_detect(CAUSABAS, "^C[0-9]{2}")     # CID C00 a C99
+  ) %>%
+  count(CODMUNRES, name = "obitos_neopl_fem")
+
+obitos_neopl_fem #o valor dessa variável no município m será o numerador da fórmula do indicador TxFNM23 para o município em questão
+#já o numerador, para esse indicador, será o valor da coluna "Feminino" do data frame df_final no município m
+#por fim, o resultado dessa divisão será multiplicado pelo fator de multiplicação
+
+#Calculando:
+tabela_ind7 <- (obitos_neopl_fem$obitos_neopl_fem / df_final$Feminino) * 1e5
+tabela_ind7
+
+base_indicadores$TxFNM23 <- tabela_ind7 #armazenando na base de indicadores
 
 
 #Agora, o indicador de mortalidade por disparo de arma de fogo
