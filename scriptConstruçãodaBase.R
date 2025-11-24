@@ -260,7 +260,7 @@ sim_2023 <- fetch_datasus(
   vars = c("SEXO", "CAUSABAS", "CODMUNRES","LOCOCOR","RACACOR") #adicionando variável raça ao sim_2023
 )
 
-obitos_ext_parda <- sim_2023 %>%
+Causas_externas_de_morbidade_e_mortalidade <- sim_2023 %>%
   filter(
     str_detect(CAUSABAS, "^[V-Y][0-9]{2}"),
     RACACOR == "4"
@@ -271,10 +271,10 @@ obitos_ext_parda <- sim_2023 %>%
            fill = list(obitos_ext_parda = 0)) %>% #garantindo que se houver município com 0 ocorrências de óbito pelas dependências específicas, será incluído no data frame
   arrange(CODMUNRES)
 
-obitos_ext_parda <- obitos_ext_parda %>%
+Causas_externas_de_morbidade_e_mortalidade <- Causas_externas_de_morbidade_e_mortalidade %>%
   filter(CODMUNRES != "330000")
 
-tabela_ind6 <- (obitos_ext_parda$obitos_ext_parda / df_final$Total) * 1e5
+tabela_ind6 <- (Causas_externas_de_morbidade_e_mortalidade$obitos_ext_parda / df_final$Total) * 1e5
 tabela_ind6
 
 base_indicadores$TxMCEPP23 <- tabela_ind6 #armazenando na base de indicadores
