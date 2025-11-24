@@ -1,32 +1,8 @@
-Este é o repositório sendo usado pelos alunos Felipe Ceacero Rodrigues Maia, Maria Eduarda Noira Passos da Costa Leal, Sarah de Lima Veríssimo Ivanicska Costa, Tiago Goulart Veloso Nunes e Vitor Eduardo Bezerra Ferreira da Universidade Federal Fluminense (UFF) no segundo semestre dentro da cadeira Prática Estatística 1. 
+Este é o repositório sendo usado pelos alunos Felipe Ceacero Rodrigues Maia, Maria Eduarda Noira Passos da Costa Leal, Sarah de Lima Veríssimo Ivanicska Costa, Tiago Goulart Veloso Nunes e Vitor Eduardo Bezerra Ferreira da Universidade Federal Fluminense (UFF) no segundo semestre de 2025 dentro da cadeira Prática Estatística 1. 
 
 A cadeira de Prática Estatística 1 é uma das diversas propostas de extensão realizadas pela UFF, a extensão universitária é a ponte entre a universidade e a sociedade. Ela leva o conhecimento acadêmico para além da sala de aula, contribuindo para solucionar problemas sociais e aproximar a universidade da comunidade. 
 
-Neste projeto fomos encarregados de propor indicadores municipais nos baseando na base de dados SIM (Sistema de informações sobre mortalidade) do Datasus, e esperamos que nossos indicadores propostos sejam capazes de facilitar pesquisas e discussões sobre as causas de morte que eles exploram. Segue abaixo uma breve explicação sobre cada um de nossos 12 indicadores:
-
-TxMFAG23: Indicador que mede o número de óbitos causados por complicações envolvendo o sistema geniturinário da população feminina do munícipio em relação a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos médicos, principalmente na área da ginecologia.
-
-TxMNDC23: Indicador que mede o número de óbitos causados por complicações oriundas de deformidades cromossômicas em crianças entre 28 a 365 dias de vida no munícipio em relação ao número de nascidos vivos no ano de 2023, acreditamos que esse indicador pode ser útil em contextos médicos, principalmente na área da pediatria.
-
-TxMPADR23: Indicador que mede o número de óbitos causados por complicações relacionadas ao sistema respiratório em crianças entre 28 a 365 dias de vida no munícipio em relação ao número de nascidos vivos no ano de 2023, acreditamos que esse indicador pode ser útil em contextos médicos, principalmente na área da pediatria.
-
-TxMMVP23: Indicador que mede o número de óbitos da população masculina do munícipio em vias públicas relacionado a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos de segurança pública e urbanismo, podendo explicitar se certas medidas de segurança foram efetivas no ano em análise.
-
-TxMPMDPNN23: Indicador que mede o número de óbitos causados por doenças do período neo-natal em crianças com até 27 dias de vida no munícipio em relação ao número de nascidos vivos no ano de 2023, acreditamos que esse indicador pode ser útil em contextos médicos, principalmente na área da pediatria.
-
-TxMCEPP23: Indicador que mede o número de óbitos da população parda do munícipio devido a causas externas relacionado a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos de segurança pública, urbanismo e sociologia, podendo explicitar se certas medidas de segurança foram efetivas no ano em análise ou se certos munícipios apresentam complicações sociais maiores para a população parda do que outros.
-
-TxFNM23: Indicador que mede o número de óbitos causados por complicações envolvendo neoplasias malignas na população feminina do munícipio em relação a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos médicos.
-
-TxMAT23: Indicador que mede o número de óbitos causados por acidentes de trânsito no munícipio em relação a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos de urbanismo, podendo apontar para municípios com falhas em seu planejamento rodoviário.
-
-TxMLAP23: Indicador que mede o número de óbitos causados por lesões autoprovocadas no munícipio em relação a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos psicologia e psiquiatria, pondendo indicar municípios onde a população local apresenta tendências auto destrutivas muitas vezes ligadas a qualidade de vida no local.
-
-TxMDAF23: Indicador que mede o número de óbitos causados por disparos de armas de fogo no munícipio em relação a população local no ano de 2023, acreditamos que esse indicador pode ser útil em contextos de segurança pública, podendo indicar o nível de violência daquele município.
-
-PMDCv23: Indicador que confere se as doenças cardiovasculares são 25% ou mais das causas de morte naquele ano no município, está costuma ser a maior causa de mortes ao redor do mundo, então é um indicador que pode apontar para municípios anomalos que não apresentam essa causa como principal.
-
-PMCMD23: Indicador que confere se as causas não definidas são 25% ou mais das causas de morte naquele ano no município, causas mal definidas costumam envolver complicações no processo forense e são muito comuns em bases de dados sobre mortalidade, esse indicador confere a prevalência desses casos em cada município.
+Neste projeto fomos encarregados de propor indicadores municipais para o estado do Rio de Janeiro nos baseando na base de dados SIM (Sistema de informações sobre mortalidade) do Datasus, esperamos que nossos indicadores propostos sejam capazes de facilitar pesquisas e discussões sobre as causas de morte que eles exploram, sendo que essas remetem aos mais diversos tópicos como contextos médicos, ginecologia, pediatria, segurança pública, urbanismo, sociologia, planejamento rodoviário, psicologia e psiquiatria. Nós propomos um total de 12 destes indicadores e eles variam de análises de partes específicas das populoções desses municípios sendo aflingidas por comorbidades também particulares, até análises focadas nas causas mais comuns de óbito que afligem a população como um todo. É por motivos como esse, que nós como um gupo, acreditamos que pesquisadores e estudantes das mais diversas áreas podem encontrar em nosso repositório informações essenciais para facilitar suas pesquisas ou saciar suas curiosidades.
 
 
 -Segue abaixo uma explicação breve sobre o que cada arquivo neste repositório representa:
@@ -38,3 +14,5 @@ scriptConstruçãodaBase.R: Este é o script na linguagem R onde colocamos em pr
 Indicadores_Grupo_4.pdf: Neste arquivo será encontrada a versão final compilada do relatório, com todos os indicadores, suas relevâncias e modos de calcular.
 
 DicionarioDoGrupo.xlsx: Este dicionário fornece as explicações atreladas a cada indicador, bem como a fonte e as variações de taxas esperadas para cada objeto.
+
+tabela_indicadores.csv: Arquivo CSV contendo a tabela final obtida pelo nosso script no R, aqui você poderá encontrar os valores que cada variável assumiu para cada município do Rio de Janeiro.
