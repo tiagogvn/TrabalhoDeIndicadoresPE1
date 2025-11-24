@@ -49,14 +49,14 @@ nascidos_2023 <- fetch_datasus(
   process_sinasc()
 
 # Agrupando por município:
-nv_mun <- nascidos_2023 %>%
+nascidos_vivos <- nascidos_2023 %>%
   group_by(code_muni = CODMUNRES) %>% 
-  summarise(nascidos_vivos = n(), .groups = "drop")
+  summarise(nascidos_vivos_col = n(), .groups = "drop")
 
-nv_mun <- nv_mun %>% #retirando indivíduos de município de residência desconhecido
+nascidos_vivos <- nascidos_vivos %>% #retirando indivíduos de município de residência desconhecido
   filter(code_muni != "330000")
 
-nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
+nascidos_vivos #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
 
 library(readr) #agora iremos ler a planilha com as estimativas de população residente masculina, feminina e total para 2023 dos municípios do Rio de Janeiro, adquirida do estudo de estimativas populacionais pactuadas pela SES/RJ
 library(tidyr)
@@ -159,7 +159,7 @@ Anomalias_cromossomicas_NCOP <- Anomalias_cromossomicas_NCOP %>%
 
 Anomalias_cromossomicas_NCOP
 
-tabela_ind2 <- (Anomalias_cromossomicas_NCOP$obitos_def_crom / nv_mun$nascidos_vivos) * 1e3
+tabela_ind2 <- (Anomalias_cromossomicas_NCOP$obitos_def_crom / nascidos_vivos$nascidos_vivos_col) * 1e3
 tabela_ind2
 
 base_indicadores$TxMNDC23 <- tabela_ind2 #armazenando na base de indicadores
@@ -186,7 +186,7 @@ obitos_doen_neo <- obitos_doen_neo %>%
 
 obitos_doen_neo
 
-tabela_ind5 <- (obitos_doen_neo$obitos_doen_neo / nv_mun$nascidos_vivos) * 1e5
+tabela_ind5 <- (obitos_doen_neo$obitos_doen_neo / nascidos_vivos$nascidos_vivos_col) * 1e5
 tabela_ind5
 
 base_indicadores$TxMPMDPNN23 <- tabela_ind5 #armazenando na base de indicadores
