@@ -396,7 +396,7 @@ Doencas_do_aparelho_circulatorio <- sim_2023 %>%
 Doencas_do_aparelho_circulatorio <- Doencas_do_aparelho_circulatorio %>% 
   filter(CODMUNRES != "330000")
 
-Doencas_do_aparelho_circulatorio
+Doencas_do_aparelho_circulatorio #total de óbitos nos municípios por doenças cardiovasculares
 
 TOTAL <- sim_2023 %>%
   group_by(CODMUNRES) %>%
@@ -410,12 +410,12 @@ TOTAL <- TOTAL %>%
 
 TOTAL #total de óbitos nos municípios, por todas as causas
 
-#Calculando a proporção por município
+#Criando objeto com as informações
 prop_cardio <- TOTAL %>%
   left_join(Doencas_do_aparelho_circulatorio, by = "CODMUNRES") %>%
   mutate(obitos_cardio = replace_na(obitos_cardio, 0))
 
-# 4) Calcular proporção de óbitos cardiovasculares
+#Calculando proporção de óbitos de doença cardiovascular
 prop_cardio <- prop_cardio %>%
   mutate(prop_cardio = obitos_cardio / obitos_todos)
 prop_cardio <- prop_cardio %>%
@@ -424,6 +424,48 @@ prop_cardio <- prop_cardio %>%
 base_indicadores$PMDCv23 <- prop_cardio$ind_cardiovasc_quali #armazenando na base
 
 
+#
+#Indicador de Causa mal definida >= 25% das mortes no município em 2023
+
+causa_mal_def <- "^R[0-9]{2}"
+
+Causas_mal_definidas_e_desconhecidas_mortalidade <- sim_2023 %>%
+  filter(str_detect(CAUSABAS, causa_mal_def)) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_mal_def = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_mal_def = 0)) %>%
+  arrange(CODMUNRES)
+
+Causas_mal_definidas_e_desconhecidas_mortalidade <- Causas_mal_definidas_e_desconhecidas_mortalidade %>% 
+  filter(CODMUNRES != "330000")
+
+Causas_mal_definidas_e_desconhecidas_mortalidade #total de óbitos com causa mal definida
+
+TOTAL <- sim_2023 %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_todos = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_todos = 0)) %>%
+  arrange(CODMUNRES)
+
+TOTAL <- TOTAL %>% 
+  filter(CODMUNRES != "330000")
+
+TOTAL #total de óbitos nos municípios, por todas as causas
+
+#criando data frame com as informações
+prop_mal_def <- TOTAL %>%
+  left_join(Causas_mal_definidas_e_desconhecidas_mortalidade, by = "CODMUNRES") %>%
+  mutate(obitos_mal_def = replace_na(obitos_mal_def, 0))
+
+#Calculando proporção de óbitos com causa mal definida
+prop_mal_def <- prop_mal_def %>%
+  mutate(prop_mal_def = obitos_mal_def / obitos_todos)
+prop_mal_def <- prop_mal_def %>%
+  mutate(ind_mal_def = if_else(prop_mal_def < 0.25, 0, 1))
+
+base_indicadores$PMCMD23 <- prop_mal_def$ind_mal_def #armazenando na base
 
 
 
