@@ -308,6 +308,31 @@ base_indicadores$TxFNM23 <- tabela_ind7 #armazenando na base de indicadores
 
 
 #
+#Taxa de mortalidade por acidentes de trânsito em 2023 a cada 100 mil habitantes
+causas_transito <- "^V(0[1-9]|[1-9][0-9])"
+
+Acidentes_de_Transporte <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, causas_transito)
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_acidentes_transito = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_acidentes_transito = 0)) %>%
+  arrange(CODMUNRES)
+
+Acidentes_de_Transporte <- Acidentes_de_Transporte %>%
+  filter(CODMUNRES != "330000")
+
+Acidentes_de_Transporte
+
+tabela_ind8 <- (Acidentes_de_Transporte$obitos_acidentes_transito / df_final$Total) * 1e5
+tabela_ind8
+
+base_indicadores$TxMAT23 <- tabela_ind8 #armazenando na base de indicadores
+
+
+#
 #Agora, o indicador de mortalidade por disparo de arma de fogo
 
 #Obtendo número de mortes por armas de fogo por município em 2023
