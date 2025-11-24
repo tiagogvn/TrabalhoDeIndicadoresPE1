@@ -380,6 +380,48 @@ tabela_ind10
 base_indicadores$TxMDAF23 <- tabela_ind10
 
 
+#
+#Indicador de Doença cardiovascular >= 25% das mortes no município em 2023
+
+causa_cardio <- "^I[0-9]{2}"
+
+Doencas_do_aparelho_circulatorio <- sim_2023 %>%
+  filter(str_detect(CAUSABAS, causa_cardio)) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_cardio = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_cardio = 0)) %>%
+  arrange(CODMUNRES)
+
+Doencas_do_aparelho_circulatorio <- Doencas_do_aparelho_circulatorio %>% 
+  filter(CODMUNRES != "330000")
+
+Doencas_do_aparelho_circulatorio
+
+TOTAL <- sim_2023 %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_todos = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_todos = 0)) %>%
+  arrange(CODMUNRES)
+
+TOTAL <- TOTAL %>% 
+  filter(CODMUNRES != "330000")
+
+TOTAL #total de óbitos nos municípios, por todas as causas
+
+#Calculando a proporção por município
+prop_cardio <- TOTAL %>%
+  left_join(Doencas_do_aparelho_circulatorio, by = "CODMUNRES") %>%
+  mutate(obitos_cardio = replace_na(obitos_cardio, 0))
+
+# 4) Calcular proporção de óbitos cardiovasculares
+prop_cardio <- prop_cardio %>%
+  mutate(prop_cardio = obitos_cardio / obitos_todos)
+prop_cardio <- prop_cardio %>%
+  mutate(ind_cardiovasc_quali = if_else(prop_cardio < 0.25, 0, 1))
+
+base_indicadores$PMDCv23 <- prop_cardio$ind_cardiovasc_quali #armazenando na base
 
 
 
