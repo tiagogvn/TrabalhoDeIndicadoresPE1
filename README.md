@@ -36,3 +36,5 @@ pop_populacao_ripsa202417635071428.csv: Arquivo com a população de cada munic�
 scriptConstruçãodaBase.R: Este é o script na linguagem R onde colocamos em prática os indicadores que propomos para o projeto, lá é possível encontrar o passo a passo a ser seguido para realizar as mesmas análises que fizemos por conta própria caso isso seja de seu interesse. No final, ao terminar de rodar os códigos você terá uma tabela onde cada linha é um munícipio do Rio de Janeiro e cada coluna é um de nossos 12 indicadores propostos. 
 
 Indicadores_Grupo_4.pdf: Neste arquivo será encontrada a versão final compilada do relatório, com todos os indicadores, suas relevâncias e modos de calcular.
+
+DicionarioDoGrupo.xlsx: Este dicionário fornece as explicações atreladas a cada indicador, bem como a fonte e as variações de taxas esperadas para cada objeto.
