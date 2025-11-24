@@ -333,6 +333,31 @@ base_indicadores$TxMAT23 <- tabela_ind8 #armazenando na base de indicadores
 
 
 #
+#Taxa de mortalidade por lesões auto provocadas em 2023 a cada 100 mil habitantes
+causas_auto_prov <- "^X(6[0-9]|7[0-9]|8[0-4])"
+
+Lesoes_autoprovocadas_intencionalmente <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, causas_auto_prov)
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_auto_prov = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_auto_prov = 0)) %>%
+  arrange(CODMUNRES)
+
+Lesoes_autoprovocadas_intencionalmente <- Lesoes_autoprovocadas_intencionalmente %>%
+  filter(CODMUNRES != "330000")
+
+Lesoes_autoprovocadas_intencionalmente
+
+tabela_ind9 <- (Lesoes_autoprovocadas_intencionalmente$obitos_auto_prov / df_final$Total) * 1e5
+tabela_ind9
+
+base_indicadores$TxMLAP23 <- tabela_ind9 #armazenando na base de indicadores
+
+
+#
 #Agora, o indicador de mortalidade por disparo de arma de fogo
 
 #Obtendo número de mortes por armas de fogo por município em 2023
