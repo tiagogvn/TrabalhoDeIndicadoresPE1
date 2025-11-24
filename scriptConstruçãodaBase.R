@@ -193,6 +193,37 @@ base_indicadores$TxMPADR23 <- tabela_ind3 #armazenando na base de indicadores
 
 
 #
+#Taxa de Mortalidade Masculina em Vias Públicas em 2023 a cada 100.000 mil habitantes
+sim_2023 <- fetch_datasus(
+  year_start = 2023,
+  year_end = 2023,
+  uf = "RJ",
+  information_system = "SIM-DO", 
+  vars = c("SEXO", "CAUSABAS", "CODMUNRES","LOCOCOR") #adicionando local de ocorrência às variáveis no sim_2023
+)
+
+obitos_masc_vias <- sim_2023 %>%
+  filter(
+    SEXO == "1",    #homens
+    LOCOCOR == "3"  #local de ocorrência
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_masc_vias = n(), .groups = "drop") %>%
+  arrange(CODMUNRES)
+
+obitos_masc_vias <- obitos_masc_vias %>%
+  filter(CODMUNRES != "330000")
+
+obitos_masc_vias
+sum(obitos_masc_vias$obitos_masc_vias)
+
+tabela_ind4 <- (obitos_masc_vias$obitos_masc_vias / df_final$Total) * 1e5
+tabela_ind4
+
+base_indicadores$TxMMVP23 <- tabela_ind4 #armazenando na base de indicadores
+
+
+#
 #Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 
 
 #Incluindo apenas as causas pertinentes
@@ -226,7 +257,7 @@ sim_2023 <- fetch_datasus(
   year_end = 2023,
   uf = "RJ",
   information_system = "SIM-DO",
-  vars = c("SEXO", "CAUSABAS", "CODMUNRES","RACACOR") #adicionando variável raça ao sim_2023
+  vars = c("SEXO", "CAUSABAS", "CODMUNRES","LOCOCOR","RACACOR") #adicionando variável raça ao sim_2023
 )
 
 obitos_ext_parda <- sim_2023 %>%
