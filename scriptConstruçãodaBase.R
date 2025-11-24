@@ -139,6 +139,33 @@ base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
 
 
 #
+#Indicador da Mortalidade Neonatal por Deformidades Cromossômicas em 2023 a cada 1000 nascidos vivos
+
+#Incluindo apenas as causas pertinentes
+causas_cromossomicas <- "^(Q9[0-3]|Q9[5-9])"
+
+Anomalias_cromossomicas_NCOP <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, causas_cromossomicas)
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_def_crom = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_def_crom = 0)) %>%
+  arrange(CODMUNRES)
+
+Anomalias_cromossomicas_NCOP <- Anomalias_cromossomicas_NCOP %>%
+  filter(CODMUNRES != "330000")
+
+Anomalias_cromossomicas_NCOP
+
+tabela_ind2 <- (Anomalias_cromossomicas_NCOP$obitos_def_crom / nv_mun$nascidos_vivos) * 1e3
+tabela_ind2
+
+base_indicadores$TxMNDC23 <- tabela_ind2 #armazenando na base de indicadores
+
+
+#
 #Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 
 
 #Incluindo apenas as causas pertinentes
