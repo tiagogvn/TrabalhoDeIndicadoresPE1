@@ -102,7 +102,7 @@ df_final
 #Agora que temos todos os valores que serão utilizados nos denominadores das
 #fórmulas dos indicadores, basta calcular cada indicador pegando a informação
 #de mortalidade.
-#Começando pelo indicador de Mortalidade Feminina por Doenças do Aparelho Geniturinário:
+#Começando pelo indicador da Taxa de Mortalidade Feminina por Doenças do Aparelho Geniturinário em 2023 a cada 10.000 habitantes:
 
 #Baixando SIM 2023 para o RJ, que contém dados que serão utilizados para o cálculo de quase todos os indicadores
 sim_2023 <- fetch_datasus(
@@ -132,14 +132,14 @@ Doencas_do_aparelho_geniturinario #o valor dessa variável no município m será
                                   #por fim, o resultado dessa divisão será multiplicado pelo fator de multiplicação
 
 #Calculando:
-tabela_ind1 <- (Doencas_do_aparelho_geniturinario$obitos_genit_fem / df_final$Feminino) * 1e5
+tabela_ind1 <- (Doencas_do_aparelho_geniturinario$obitos_genit_fem / df_final$Feminino) * 1e4
 tabela_ind1
 
 base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
 
 
 #
-#Indicador da Mortalidade Neonatal por Deformidades Cromossômicas em 2023 a cada 1000 nascidos vivos
+#Indicador da Taxa de Mortalidade Neonatal por Deformidades Cromossômicas em 2023 a cada 1000 nascidos vivos
 
 #Incluindo apenas as causas pertinentes
 causas_cromossomicas <- "^(Q9[0-3]|Q9[5-9])"
@@ -166,7 +166,7 @@ base_indicadores$TxMNDC23 <- tabela_ind2 #armazenando na base de indicadores
 
 
 #
-#Indicador da Mortalidade Neonatal por Deformidades Cromossômicas em 2023 a cada 1000 nascidos vivos
+#Indicador da Taxa de Mortalidade de 28-365 dias por Doenças do Aparelho Respiratório em 2023 a cada 1000 nascidos vivos
 
 #Incluindo apenas as causas pertinentes
 causas_respiratorias <- "^^(J0[0-6]|J0[9]|J1[0-8]|J2[0-2]|J3[0-9]|J4[0-7]|J6[0-9]|J8[0-4]|J9[0-9])"
@@ -193,7 +193,7 @@ base_indicadores$TxMPADR23 <- tabela_ind3 #armazenando na base de indicadores
 
 
 #
-#Taxa de Mortalidade Masculina em Vias Públicas em 2023 a cada 100.000 mil habitantes
+#Taxa de Mortalidade Masculina em Vias Públicas em 2023 a cada 10.000 habitantes
 sim_2023 <- fetch_datasus(
   year_start = 2023,
   year_end = 2023,
@@ -217,14 +217,14 @@ obitos_masc_vias <- obitos_masc_vias %>%
 obitos_masc_vias
 sum(obitos_masc_vias$obitos_masc_vias)
 
-tabela_ind4 <- (obitos_masc_vias$obitos_masc_vias / df_final$Total) * 1e5
+tabela_ind4 <- (obitos_masc_vias$obitos_masc_vias / df_final$Total) * 1e4
 tabela_ind4
 
 base_indicadores$TxMMVP23 <- tabela_ind4 #armazenando na base de indicadores
 
 
 #
-#Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 
+#Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 a cada 1000 nascidos vivos
 
 #Incluindo apenas as causas pertinentes
 causas_perinatal <- "^(P0[0-4]|P0[5-8]|P1[0-5]|P2[0-9]|P3[5-9]|P5[0-9]|P6[0-1]|P7[0-4]|P9[0-6])"
@@ -251,7 +251,7 @@ base_indicadores$TxMPMDPNN23 <- tabela_ind5 #armazenando na base de indicadores
 
 
 #
-#Indicador de mortalidade por causas externas na população parda
+#Taxa de mortalidade por causas externas na população parda a cada 10.000 habitantes
 sim_2023 <- fetch_datasus(
   year_start = 2023,
   year_end = 2023,
@@ -274,14 +274,14 @@ Causas_externas_de_morbidade_e_mortalidade <- sim_2023 %>%
 Causas_externas_de_morbidade_e_mortalidade <- Causas_externas_de_morbidade_e_mortalidade %>%
   filter(CODMUNRES != "330000")
 
-tabela_ind6 <- (Causas_externas_de_morbidade_e_mortalidade$obitos_ext_parda / df_final$Total) * 1e5
+tabela_ind6 <- (Causas_externas_de_morbidade_e_mortalidade$obitos_ext_parda / df_final$Total) * 1e4
 tabela_ind6
 
 base_indicadores$TxMCEPP23 <- tabela_ind6 #armazenando na base de indicadores
 
 
 #
-#Agora calcularemos o indicador de Mortalidade Feminina por Neoplasias Malignas:
+#Agora calcularemos o indicador da Taxa de Mortalidade Feminina por Neoplasias Malignas a cada 10.000 habitantes:
 #Calculando quantidade de óbitos por C00-99 nos municípios do Rio de Janeiro em 2023
 obitos_neopl_fem <- sim_2023 %>%
   filter(
@@ -301,14 +301,14 @@ obitos_neopl_fem #o valor dessa variável no município m será o numerador da f
 #por fim, o resultado dessa divisão será multiplicado pelo fator de multiplicação
 
 #Calculando:
-tabela_ind7 <- (obitos_neopl_fem$obitos_neopl_fem / df_final$Feminino) * 1e5
+tabela_ind7 <- (obitos_neopl_fem$obitos_neopl_fem / df_final$Feminino) * 1e4
 tabela_ind7
 
 base_indicadores$TxFNM23 <- tabela_ind7 #armazenando na base de indicadores
 
 
 #
-#Taxa de mortalidade por acidentes de trânsito em 2023 a cada 100 mil habitantes
+#Taxa de mortalidade por acidentes de trânsito em 2023 a cada 10.000 habitantes
 causas_transito <- "^V(0[1-9]|[1-9][0-9])"
 
 Acidentes_de_Transporte <- sim_2023 %>%
@@ -326,14 +326,14 @@ Acidentes_de_Transporte <- Acidentes_de_Transporte %>%
 
 Acidentes_de_Transporte
 
-tabela_ind8 <- (Acidentes_de_Transporte$obitos_acidentes_transito / df_final$Total) * 1e5
+tabela_ind8 <- (Acidentes_de_Transporte$obitos_acidentes_transito / df_final$Total) * 1e4
 tabela_ind8
 
 base_indicadores$TxMAT23 <- tabela_ind8 #armazenando na base de indicadores
 
 
 #
-#Taxa de mortalidade por lesões auto provocadas em 2023 a cada 100 mil habitantes
+#Taxa de mortalidade por lesões auto provocadas em 2023 a cada 10.000 habitantes
 causas_auto_prov <- "^X(6[0-9]|7[0-9]|8[0-4])"
 
 Lesoes_autoprovocadas_intencionalmente <- sim_2023 %>%
@@ -351,14 +351,14 @@ Lesoes_autoprovocadas_intencionalmente <- Lesoes_autoprovocadas_intencionalmente
 
 Lesoes_autoprovocadas_intencionalmente
 
-tabela_ind9 <- (Lesoes_autoprovocadas_intencionalmente$obitos_auto_prov / df_final$Total) * 1e5
+tabela_ind9 <- (Lesoes_autoprovocadas_intencionalmente$obitos_auto_prov / df_final$Total) * 1e4
 tabela_ind9
 
 base_indicadores$TxMLAP23 <- tabela_ind9 #armazenando na base de indicadores
 
 
 #
-#Agora, o indicador de mortalidade por disparo de arma de fogo
+#Agora, o indicador da Taxa de mortalidade por disparo de arma de fogo em 2023 a cada 10.000 habitantes
 
 #Obtendo número de mortes por armas de fogo por município em 2023
 obitos_armas <- sim_2023 %>%
@@ -374,14 +374,14 @@ obitos_armas <- obitos_armas %>%
 
 obitos_armas #numerador do indicador
 
-tabela_ind10 <- (obitos_armas$obitos_armas / df_final$Total) * 1e5
+tabela_ind10 <- (obitos_armas$obitos_armas / df_final$Total) * 1e4
 tabela_ind10
 
 base_indicadores$TxMDAF23 <- tabela_ind10
 
 
 #
-#Indicador de Doença cardiovascular >= 25% das mortes no município em 2023
+#Taxa de Mortalidade por Doença cardiovascular >= 25% das mortes no município em 2023 a cada 10.000 habitantes
 
 causa_cardio <- "^I[0-9]{2}"
 
