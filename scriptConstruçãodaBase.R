@@ -213,7 +213,7 @@ obitos_doen_neo <- obitos_doen_neo %>%
 
 obitos_doen_neo
 
-tabela_ind5 <- (obitos_doen_neo$obitos_doen_neo / nascidos_vivos$nascidos_vivos_col) * 1e5
+tabela_ind5 <- (obitos_doen_neo$obitos_doen_neo / nascidos_vivos$nascidos_vivos_col) * 1e3
 tabela_ind5
 
 base_indicadores$TxMPMDPNN23 <- tabela_ind5 #armazenando na base de indicadores
