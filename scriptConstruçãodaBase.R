@@ -53,6 +53,9 @@ nv_mun <- nascidos_2023 %>%
   group_by(code_muni = CODMUNRES) %>% 
   summarise(nascidos_vivos = n(), .groups = "drop")
 
+nv_mun <- nv_mun %>% #retirando indivíduos de município de residência desconhecido
+  filter(code_muni != "330000")
+
 nv_mun #o data frame resultante possui o código do município, e o número de nascidos vivos nesse município em 2023
 
 library(readr) #agora iremos ler a planilha com as estimativas de população residente masculina, feminina e total para 2023 dos municípios do Rio de Janeiro, adquirida do estudo de estimativas populacionais pactuadas pela SES/RJ
@@ -134,6 +137,35 @@ tabela_ind1
 
 base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
 
+
+#
+#Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 
+
+#Incluindo apenas as causas pertinentes
+causas_perinatal <- "^(P0[0-4]|P0[5-8]|P1[0-5]|P2[0-9]|P3[5-9]|P5[0-9]|P6[0-1]|P7[0-4]|P9[0-6])"
+
+obitos_doen_neo <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, causas_perinatal)
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_doen_neo = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_doen_neo = 0)) %>%
+  arrange(CODMUNRES)
+
+obitos_doen_neo <- obitos_doen_neo %>%
+  filter(CODMUNRES != "330000")
+
+obitos_doen_neo
+
+tabela_ind5 <- (obitos_doen_neo$obitos_doen_neo / nv_mun$nascidos_vivos) * 1e5
+tabela_ind5
+
+base_indicadores$TxMPMDPNN23 <- tabela_ind5 #armazenando na base de indicadores
+
+
+#
 #Indicador de mortalidade por causas externas na população parda
 sim_2023 <- fetch_datasus(
   year_start = 2023,
@@ -162,6 +194,8 @@ tabela_ind6
 
 base_indicadores$TxMCEPP23 <- tabela_ind6 #armazenando na base de indicadores
 
+
+#
 #Agora calcularemos o indicador de Mortalidade Feminina por Neoplasias Malignas:
 #Calculando quantidade de óbitos por C00-99 nos municípios do Rio de Janeiro em 2023
 obitos_neopl_fem <- sim_2023 %>%
@@ -188,6 +222,7 @@ tabela_ind7
 base_indicadores$TxFNM23 <- tabela_ind7 #armazenando na base de indicadores
 
 
+#
 #Agora, o indicador de mortalidade por disparo de arma de fogo
 
 #Obtendo número de mortes por armas de fogo por município em 2023
