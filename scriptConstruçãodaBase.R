@@ -134,6 +134,33 @@ tabela_ind1
 
 base_indicadores$TxMFAG23 <- tabela_ind1 #armazenando na base de indicadores
 
+#Indicador de mortalidade por causas externas na população parda
+sim_2023 <- fetch_datasus(
+  year_start = 2023,
+  year_end = 2023,
+  uf = "RJ",
+  information_system = "SIM-DO",
+  vars = c("SEXO", "CAUSABAS", "CODMUNRES","RACACOR") #adicionando variável raça ao sim_2023
+)
+
+obitos_ext_parda <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, "^[V-Y][0-9]{2}"),
+    RACACOR == "4"
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_ext_parda = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_ext_parda = 0)) %>% #garantindo que se houver município com 0 ocorrências de óbito pelas dependências específicas, será incluído no data frame
+  arrange(CODMUNRES)
+
+obitos_ext_parda <- obitos_ext_parda %>%
+  filter(CODMUNRES != "330000")
+
+tabela_ind6 <- (obitos_ext_parda$obitos_ext_parda / df_final$Total) * 1e5
+tabela_ind6
+
+base_indicadores$TxMCEPP23 <- tabela_ind6 #armazenando na base de indicadores
 
 #Agora calcularemos o indicador de Mortalidade Feminina por Neoplasias Malignas:
 #Calculando quantidade de óbitos por C00-99 nos municípios do Rio de Janeiro em 2023
@@ -147,7 +174,7 @@ obitos_neopl_fem <- sim_2023 %>%
            fill = list(obitos_neopl_fem = 0)) %>%
   arrange(CODMUNRES)
 
-obitos_neopl_fem <- obitos_neopl_fem %>% #retirando indivíduos de município de residência desconhecido
+obitos_neopl_fem <- obitos_neopl_fem %>%
   filter(CODMUNRES != "330000")
 
 obitos_neopl_fem #o valor dessa variável no município m será o numerador da fórmula do indicador TxFNM23 para o município em questão
@@ -172,7 +199,7 @@ obitos_armas <- sim_2023 %>%
            fill = list(obitos_armas = 0)) %>%
   arrange(CODMUNRES)
 
-obitos_armas <- obitos_armas %>% #retirando indivíduos de município de residência desconhecido
+obitos_armas <- obitos_armas %>% 
   filter(CODMUNRES != "330000")
 
 obitos_armas #numerador do indicador
