@@ -166,6 +166,33 @@ base_indicadores$TxMNDC23 <- tabela_ind2 #armazenando na base de indicadores
 
 
 #
+#Indicador da Mortalidade Neonatal por Deformidades Cromossômicas em 2023 a cada 1000 nascidos vivos
+
+#Incluindo apenas as causas pertinentes
+causas_respiratorias <- "^^(J0[0-6]|J0[9]|J1[0-8]|J2[0-2]|J3[0-9]|J4[0-7]|J6[0-9]|J8[0-4]|J9[0-9])"
+
+Doenças_do_aparelho_respiratorio <- sim_2023 %>%
+  filter(
+    str_detect(CAUSABAS, causas_respiratorias)
+  ) %>%
+  group_by(CODMUNRES) %>%
+  summarise(obitos_respiratorios = n(), .groups = "drop") %>%
+  complete(CODMUNRES = sim_2023$CODMUNRES,
+           fill = list(obitos_respiratorios = 0)) %>%
+  arrange(CODMUNRES)
+
+Doenças_do_aparelho_respiratorio <- Doenças_do_aparelho_respiratorio %>%
+  filter(CODMUNRES != "330000")
+
+Doenças_do_aparelho_respiratorio
+
+tabela_ind3 <- (Doenças_do_aparelho_respiratorio$obitos_respiratorios / nascidos_vivos$nascidos_vivos_col) * 1e3
+tabela_ind3
+
+base_indicadores$TxMPADR23 <- tabela_ind3 #armazenando na base de indicadores
+
+
+#
 #Indicador da Mortalidade de 0-27 dias por Doenças do Período Neo-Natal em 2023 
 
 #Incluindo apenas as causas pertinentes
